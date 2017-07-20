@@ -10,8 +10,7 @@ inquirer.prompt([{
   message: "Please choose a flashcard.",
   choices: ["Basic Flashcards", "Cloze Flashcards"],
   name: "flashCardType"
-}
-]).then(function(response){
+}]).then(function(response) {
   console.log(response.flashCardType);
   //
   if (response.flashCardType === "Basic Flashcards") {
@@ -24,55 +23,57 @@ inquirer.prompt([{
   }
 });
 
-function basicChoice(){
+function basicChoice() {
   inquirer.prompt([{
     type: "list",
     message: "Do you want to create another question or take the quiz?",
     choices: ["Create another question", "Take quiz"],
     name: "option"
-  }]).then(function(decision){
+  }]).then(function(decision) {
     if (decision.option === "Create another question") {
       basicAsk();
-    }else{
+    } else {
       console.log("Take quiz");
-      console.log("You have created " + BasicCardArr.length+ " cards.");
-      console.log(BasicCardArr);
+      console.log("You have created " + BasicCardArr.length + " cards.");
+      // console.log(BasicCardArr);
+      basicQuiz();
     }
   });
 }
 
-function clozeChoice(){
+function clozeChoice() {
   inquirer.prompt([{
     type: "list",
     message: "Do you want to create another sentence or take the quiz?",
     choices: ["Create another sentence", "Take quiz"],
     name: "option"
-  }]).then(function(decision){
+  }]).then(function(decision) {
     if (decision.option === "Create another sentence") {
       clozeAsk();
-    }else{
+    } else {
       console.log("Take quiz");
       console.log("You have created " + ClozeCardArr.length + " cards.");
-      console.log(ClozeCardArr);
+      // console.log(ClozeCardArr);
+      clozeQuiz();
     }
   });
 }
 
-function basicAsk(){
+function basicAsk() {
   inquirer.prompt([{
-    type: "input",
-    message: "Enter your question.",
-    name: "front"
-  },
-  {
-    type: "input",
-    message: "Enter your answer",
-    name: "back"
-  }
-]).then(function(cont){
-  //using the constructor
-  // console.log(basic);
-    var card = new basic(cont.front,cont.back);
+      type: "input",
+      message: "Enter your question.",
+      name: "front"
+    },
+    {
+      type: "input",
+      message: "Enter your answer",
+      name: "back"
+    }
+  ]).then(function(cont) {
+    //using the constructor
+    // console.log(basic);
+    var card = new basic(cont.front, cont.back);
     //push object made by the constructor to the array
     BasicCardArr.push(card);
     basicChoice();
@@ -80,24 +81,50 @@ function basicAsk(){
   });
 }
 
-function clozeAsk(){
+function clozeAsk() {
   inquirer.prompt([{
-    type: "input",
-    message: "Enter a complete sentence.",
-    name: "front"
-  },
-  {
-    type: "input",
-    message: "Enter your cloze word.",
-    name: "back"
-  }
-]).then(function(cont){
-  //using the constructor
-  // console.log(basic);
-    var card = new cloze(cont.front,cont.back);
+      type: "input",
+      message: "Enter a complete sentence.",
+      name: "front"
+    },
+    {
+      type: "input",
+      message: "Enter your cloze word.",
+      name: "back"
+    }
+  ]).then(function(cont) {
+    //using the constructor
+    // console.log(basic);
+    var card = new cloze(cont.front, cont.back);
+
     //push object made by the constructor to the array
     ClozeCardArr.push(card);
     clozeChoice();
     // create questions or take quiz
+
   });
+}
+
+var num = 0;
+var correct = 0;
+
+function clozeQuiz() {
+  if (num < ClozeCardArr.length) {
+    inquirer.prompt([{
+      type: "input",
+      message: ClozeCardArr[num].partial(),
+      name: "reply"
+    }]).then(function(quiz) {
+      if (quiz.reply === ClozeCardArr[num].cloze) {
+        correct++;
+        console.log("You are correct!!!");
+      } else {
+        console.log("No bueno!!");
+      }
+      num++;
+      clozeQuiz();
+    })
+  } else {
+    console.log("You scored " + correct + " out of " + ClozeCardArr.length);
+  }
 }
