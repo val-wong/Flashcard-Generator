@@ -1,2 +1,2 @@
 # Flashcard-Generator
-Javascript project building cloze constructors
+Javascript project building and using constructors
